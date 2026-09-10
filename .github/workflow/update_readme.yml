@@ -1,0 +1,63 @@
+name: Update Recent Posts in README
+
+on:
+  push:
+    paths:
+      - 'content/**' # content 폴더에 변화가 있을 때만 실행
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Generate Recent 5 Posts
+        run: |
+          python -c "
+          import os, glob
+
+          # content 폴더 내 .md 파일들을 수정 시간 순으로 정렬
+          files = glob.glob('content/*.md')
+          files.sort(key=os.path.getmtime, reverse=True)
+
+          # 최근 5개만 추출
+          recent_files = files[:5]
+
+          lines = []
+          for f in recent_files:
+              filename = os.path.basename(f)
+              # 파일명을 예쁘게 제목으로 변환 (확장자 제거 및 하이픈을 공백으로)
+              title = filename.replace('.md', '').replace('-', ' ').title()
+              lines.append(f'- [{title}](./{f})')
+
+          content_to_insert = '\n'.join(lines) if lines else '- No recent notes available.'
+
+          # README.md 읽어서 주석 사이에 목록 덮어쓰기
+          with open('README.md', 'r', encoding='utf-8') as file:
+              readme = file.read()
+
+          start_tag = '<!-- RECENT_POSTS:START -->'
+          end_tag = '<!-- RECENT_POSTS:END -->'
+
+          start_idx = readme.find(start_tag) + len(start_tag)
+          end_idx = readme.find(end_tag)
+
+          new_readme = readme[:start_idx] + '\n' + content_to_insert + '\n' + readme[end_idx:]
+
+          with open('README.md', 'w', encoding='utf-8') as file:
+              file.write(new_readme)
+          "
+
+      - name: Commit and Push Changes
+        run: |
+          git config --local user.email "ukelly822@github.com"
+          git config --local user.name "GitHub Action Bot"
+          git add README.md
+          git diff-index --quiet HEAD || git commit -m "docs: Auto-update recent 5 posts in README"
+          git push
