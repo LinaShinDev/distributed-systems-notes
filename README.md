@@ -17,7 +17,6 @@ This repository serves as a self-study documentation where I analyze real-world 
 
 ### 1. System Design Foundations
 * [Database Concepts & Scaling Strategy (RDBMS vs NoSQL, Scale-Up/Out)](./Database/System_Design_Database.md)
-* [Load Balancing & Stateless Architecture](./Architecture/Load_Balancing.md)
 
 ### 2. Performance & Caching
 * Cache Invalidation & Consistency Patterns
