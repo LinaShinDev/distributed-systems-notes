@@ -41,9 +41,47 @@
 
 ---
 
-### 5. Stateless Web Tier
-* Moves session state and user data out of web servers into a shared persistent data store (e.g., NoSQL / Redis).
+### 5. Stateless Architecture
 
-| Stateful Server | Stateless Server |
-| :--- | :--- |
-| Remembers client state across requests; hard to scale out | Keeps no state information; easily scalable behind a Load Balancer |
+* **Stateless Web Tier**: Moves session state and user data out of individual web servers and into a shared persistent data store (e.g., NoSQL / Redis).
+
+| Feature | Stateful Architecture | Stateless Architecture |
+| :--- | :--- | :--- |
+| **State Management** | Remembers client state across multiple requests | Stores no client state on the web server |
+| **Scalability** | Hard to scale out; requires sticky sessions on the load balancer | Highly scalable; any server can process any request behind a Load Balancer |
+
+> * **Stateful**: Server and client are tied 1:1, often using sticky sessions configured on the load balancer.
+> * **Stateless**: Client state is stored in a shared data store, making the architecture simple, resilient, and horizontally scalable.
+
+---
+
+### 6. Multi-Data Center Architecture
+
+* **GeoDNS Routing**: When a client requests a DNS resolution, GeoDNS routes the request to the geographically nearest data center based on the user's IP address.
+* **Key Challenges**:
+  * **Traffic Redirection**: Accurately routing users to the correct data center.
+  * **Data Synchronization**: Replicating data across multiple data centers to ensure consistency.
+  * **Testing and Deployment**: Managing multi-datacenter testing and automated deployments.
+
+---
+
+### 7. Message Queue
+
+* **Asynchronous Communication**: Enables decoupled, asynchronous processing between system components.
+* **Architecture**: `Producer/Publisher` $\rightarrow$ `Message Queue` $\rightarrow$ `Consumer/Subscriber` (e.g., Apache Kafka, RabbitMQ)
+* **Key Advantage**: Producers can publish messages to the queue even when consumers are offline or under heavy load.
+> **Note**: Widely used in real-world distributed systems for loose coupling, fault tolerance, and workload smoothing.
+
+---
+
+### 8. Database Scaling
+
+* **Vertical Scaling (Scale-up)**: Adding more CPU/RAM to a single server.
+  * *Limitations*: Hardware capacity limits and exponentially increasing costs.
+* **Horizontal Scaling (Scale-out / Sharding)**: Dividing large datasets into smaller, more manageable parts called **shards**.
+  * Each shard shares the same schema but holds unique subset data.
+  * **Sharding Key (Partition Key)**: Crucial for determining how data is distributed and routed efficiently for retrieval and modification.
+* **Key Challenges of Sharding**:
+  * **Resharding Data**: Required when a single shard grows too large due to uneven data distribution.
+  * **Celebrity Problem (Hotspot Key)**: Excessive traffic concentrated on a specific shard (e.g., high-profile user data).
+  * **Join and Denormalization**: Performing cross-shard joins becomes extremely difficult, often requiring database denormalization.
