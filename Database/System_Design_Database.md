@@ -85,3 +85,11 @@
   * **Resharding Data**: Required when a single shard grows too large due to uneven data distribution.
   * **Celebrity Problem (Hotspot Key)**: Excessive traffic concentrated on a specific shard (e.g., high-profile user data).
   * **Join and Denormalization**: Performing cross-shard joins becomes extremely difficult, often requiring database denormalization.
+
+
+
+--- 
+### 9. Latency
+- fast memory & slow disk
+- simple compression algorithems
+- compress data before sending it over, it will take less time 
