@@ -93,3 +93,41 @@
 - fast memory & slow disk
 - simple compression algorithems
 - compress data before sending it over, it will take less time 
+
+
+---
+### 10. Rate Limiter 
+- Controls the rate of traffic sent by a client (e.g., prevent DoS attacks, limit resource overuse).
+- **Client-side vs. Server-side API Rate Limiter**: 
+  - Client-side rate limiters are unreliable because client environments are easily controlled or bypassed by users.
+  - Server-side API rate limiters provide reliable enforcement.
+- **Key Requirements**: Low latency, minimal memory usage, and handling distributed environments gracefully.
+- **Implementation Placement**:
+  - **Middleware**: Intercepts requests and returns an HTTP `429 Too Many Requests` status code if the limit is exceeded.
+  - **API Gateway**: Supports built-in rate limiting for various protocols (e.g., REST API, WebSocket, HTTP API).
+
+---
+
+### 11. Rate Limiting Algorithms
+Understanding different rate-limiting algorithms helps choose the right combination for specific system requirements.
+
+> #### 1. Token Bucket Algorithm
+> - Works conceptually like a bucket with a pre-defined capacity that refills with tokens at a constant rate.
+> - Can maintain different buckets for different API endpoints or user tiers.
+> - **Pros**: Easy to implement, memory-efficient, allows short bursts of traffic up to the bucket capacity.
+> - **Cons**: Tuning bucket size and refill rate parameters can be challenging.
+
+> #### 2. Leaking Bucket Algorithm
+> - Processes requests at a fixed, constant rate using a First-In-First-Out (FIFO) queue.
+> - **Pros**: Smooths out traffic spikes; has a limited queue size to control memory overhead.
+> - **Cons**: If the queue fills up with old requests, recent incoming requests will be dropped or rate-limited.
+
+> #### 3. Fixed Window Counter Algorithm
+> - Divides the timeline into fixed-sized time windows (e.g., 1-minute blocks) and assigns a counter to each window.
+> - When the counter exceeds the threshold, new requests are dropped until the next time window begins.
+> - **Pros**: Easy to understand.
+> - **Cons**: Traffic spikes around the edge of windows (e.g., right before and after a reset) can allow double the allowed requests within a short actual timeframe.
+
+> #### 4. Sliding window log algorithm 
+> - 
+
